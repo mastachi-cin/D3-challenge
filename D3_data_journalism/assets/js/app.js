@@ -74,9 +74,9 @@ d3.csv("assets/data/data.csv").then(function(riskData) {
     // Step 6: Create State Texts
     // ==============================
     
-    var TextGroup = chartGroup.append("g");
+    var textGroup = chartGroup.append("g");
 
-    var Texts = TextGroup.selectAll("text")
+    var stateTexts = textGroup.selectAll("text")
       .data(riskData)
       .enter()
       .append("text")

@@ -89,6 +89,17 @@ function renderXCircles(circlesGroup, newXScale, chosenXAxis) {
   return circlesGroup;
 }
 
+// function used for updating state texts with a transition to
+// new positions
+function renderXStates(stateTexts, newXScale, chosenXAxis) {
+
+  stateTexts.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[chosenXAxis]));
+
+  return stateTexts;
+}
+
 // function used for updating circles group with a transition to
 // new circles
 function renderYCircles(circlesGroup, newYScale, chosenYAxis) {
@@ -98,6 +109,17 @@ function renderYCircles(circlesGroup, newYScale, chosenYAxis) {
     .attr("cy", d => newYScale(d[chosenYAxis]));
 
   return circlesGroup;
+}
+
+// function used for updating state texts with a transition to
+// new positions
+function renderYStates(stateTexts, newYScale, chosenYAxis) {
+
+  stateTexts.transition()
+    .duration(1000)
+    .attr("y", d => newYScale(d[chosenYAxis]));
+
+  return stateTexts;
 }
 
 // function used for updating circles group with new tooltip
@@ -131,6 +153,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 
   circlesGroup.call(toolTip);
 
+  // onmouseover event
   circlesGroup.on("mouseover", function(data) {
     toolTip.show(data);
   })
@@ -185,6 +208,18 @@ d3.csv("assets/data/data.csv").then(function(riskData, err) {
     .attr("r", 15)
     .attr("opacity", ".5")
     .attr("class", "stateCircle");
+
+  // append initial state texts
+  var textGroup = chartGroup.append("g");
+
+  var stateTexts = textGroup.selectAll("text")
+    .data(riskData)
+    .enter()
+    .append("text")
+      .text(d => d.abbr)
+      .attr("x", d => xLinearScale(d[chosenXAxis]))
+      .attr("y", d => yLinearScale(d[chosenYAxis]))
+      .attr("class", "stateText");
 
   // Create group for two x-axis labels
   var labelsXGroup = chartGroup.append("g")
@@ -247,6 +282,9 @@ d3.csv("assets/data/data.csv").then(function(riskData, err) {
         // updates circles with new x values
         circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
 
+        // updates state texts with new x values
+        stateTexts = renderXStates(stateTexts, xLinearScale, chosenXAxis);
+
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
@@ -291,6 +329,9 @@ d3.csv("assets/data/data.csv").then(function(riskData, err) {
 
         // updates circles with new y values
         circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
+
+        // updates state texts with new y values
+        stateTexts = renderYStates(stateTexts, yLinearScale, chosenYAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
